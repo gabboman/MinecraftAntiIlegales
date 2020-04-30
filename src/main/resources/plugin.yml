@@ -1,4 +1,4 @@
-name: MineanarquiaIAntiIlegales
+name: MineAnarquiaAntiIlegales
 version: ${project.version}
 main: com.danimania.mineanarquia.itemsilegales.Mineanarquia.ItemsIlegales
 api-version: 1.15

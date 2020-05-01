@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact name="AntiIlegales:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/AntiIlegales_jar</output-path>
+    <root id="root">
+      <element id="archive" name="AntiIlegales.jar">
+        <element id="module-output" name="AntiIlegales" />
+      </element>
+      <element id="library" level="project" name="Maven: cglib:cglib-nodep:3.2.5" />
+      <element id="library" level="project" name="Maven: com.comphenix.protocol:ProtocolLib:4.5.0" />
+      <element id="library" level="project" name="Maven: com.comphenix.executors:BukkitExecutors:1.1-SNAPSHOT" />
+    </root>
+  </artifact>
+</component>

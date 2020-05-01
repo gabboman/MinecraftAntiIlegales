@@ -1,3 +1,3 @@
-#Plugin para minecraftanarquia.xyz
+#Plugin para minecraftanarquia.xyz#
 
 Agradecimientos a dani17val

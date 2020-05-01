@@ -1,29 +1,19 @@
 package com.danimania.mineanarquia.itemsilegales.Mineanarquia;
 
-import com.google.common.eventbus.Subscribe;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Barrel;
-import org.bukkit.block.Block;
-import org.bukkit.block.Chest;
-import org.bukkit.block.ShulkerBox;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.Potion;
-import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionEffect;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -32,10 +22,10 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
-import java.util.List;
+
+
 import java.util.Random;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ItemsIlegales extends JavaPlugin implements Listener {
 
@@ -44,31 +34,43 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     private Random rng;
 
 
+    public void onLoad() {
+        protocolManager = ProtocolLibrary.getProtocolManager();
+        this.rng = new Random();
+
+    }
+
     @Override
     public void onEnable() {
 
-        this.protocolManager = ProtocolLibrary.getProtocolManager();
-        this.rng = new Random();
 
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         // antithunder
         this.protocolManager.addPacketListener((PacketListener)new PacketAdapter((Plugin)this, new PacketType[] { PacketType.Play.Server.NAMED_SOUND_EFFECT }) {
             public void onPacketSending(PacketEvent event) {
-                PacketContainer packet = event.getPacket();
-                Player p = event.getPlayer();
-                String soundName = (String)packet.getStrings().read(0);
-                //if (soundName.equals("ambient.weather.thunder")) {
-                if( true ){
-                    int x = ((Integer)packet.getIntegers().read(0)).intValue() / 8;
-                    int z = ((Integer)packet.getIntegers().read(2)).intValue() / 8;
-                    int distance = ItemsIlegales.this.distanceBetweenPoints(x, p.getLocation().getBlockX(), z, p.getLocation().getBlockZ());
-                    if (distance > 200) {
-                        packet.getIntegers().write(0, Integer.valueOf((-100000 + ItemsIlegales.this.rng.nextInt(100000)) * 8));
-                        packet.getIntegers().write(2, Integer.valueOf((-100000 + ItemsIlegales.this.rng.nextInt(100000)) * 8));
+
+                try{
+                    PacketContainer packet = event.getPacket();
+                    Player p = event.getPlayer();
+                    String soundName = (String)packet.getStrings().read(0);
+                    //if (soundName.equals("ambient.weather.thunder")) {
+                    if( true ){
+                        int x = ((Integer)packet.getIntegers().read(0)).intValue() / 8;
+                        int z = ((Integer)packet.getIntegers().read(2)).intValue() / 8;
+                        int distance = ItemsIlegales.this.distanceBetweenPoints(x, p.getLocation().getBlockX(), z, p.getLocation().getBlockZ());
+                        if (distance > 500) {
+                            event.setCancelled(true);
+                        }
                     }
                 }
+                catch (Exception ex) {
+                    // Bukkit.getServer().getLogger().warning("excepcion al revisar un paquete");
+                }
+
             }
         });
+
+
     }
 
     @Override

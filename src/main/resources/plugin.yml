@@ -3,3 +3,4 @@ version: ${project.version}
 main: com.danimania.mineanarquia.itemsilegales.Mineanarquia.ItemsIlegales
 api-version: 1.15
 authors: [danimania, gabboman]
+depend: [ProtocolLib]

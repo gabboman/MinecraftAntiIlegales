@@ -4,10 +4,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Item;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
@@ -19,7 +20,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 
@@ -31,12 +31,10 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     private ProtocolManager protocolManager;
 
-    private Random rng;
 
 
     public void onLoad() {
         protocolManager = ProtocolLibrary.getProtocolManager();
-        this.rng = new Random();
 
     }
 
@@ -49,23 +47,10 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         this.protocolManager.addPacketListener((PacketListener)new PacketAdapter((Plugin)this, new PacketType[] { PacketType.Play.Server.NAMED_SOUND_EFFECT }) {
             public void onPacketSending(PacketEvent event) {
 
-                try{
-                    PacketContainer packet = event.getPacket();
-                    Player p = event.getPlayer();
-                    String soundName = (String)packet.getStrings().read(0);
-                    //if (soundName.equals("ambient.weather.thunder")) {
-                    if( true ){
-                        int x = ((Integer)packet.getIntegers().read(0)).intValue() / 8;
-                        int z = ((Integer)packet.getIntegers().read(2)).intValue() / 8;
-                        int distance = ItemsIlegales.this.distanceBetweenPoints(x, p.getLocation().getBlockX(), z, p.getLocation().getBlockZ());
-                        if (distance > 500) {
-                            event.setCancelled(true);
-                        }
-                    }
-                }
-                catch (Exception ex) {
-                    // Bukkit.getServer().getLogger().warning("excepcion al revisar un paquete");
-                }
+                // cancelar sonidos nombrados? puede ser un poco basto
+                // hay que testear que sonidos se mandan.
+                // por seguridad el server sera silencioso durante unas horas
+                event.setCancelled(true);
 
             }
         });
@@ -78,6 +63,15 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         // Plugin shutdown logic
     }
 
+    // cuando se suelta un objeto (romper cofre etc)
+    @EventHandler
+    public void dropear(BlockDropItemEvent e){
+        for(Item i : e.getItems()){
+            if(verificarIlegal(i.getItemStack())){
+                i.getItemStack().setAmount(0);
+            }
+        }
+    }
     @EventHandler
     public void alEntrar(PlayerJoinEvent e){
         for(ItemStack i : e.getPlayer().getInventory().getContents()){

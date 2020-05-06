@@ -9,6 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
@@ -84,11 +85,16 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @EventHandler
     public void alPortalUsar(PlayerPortalEvent e) {
         if(e.getTo().getWorld().getEnvironment().equals(World.Environment.THE_END)){
-            Location l = e.getTo().getWorld().getSpawnLocation();
-            l.setX(100.0);
-            l.setY(51.0);
-            l.setZ(0.0);
-            e.getPlayer().teleport(e.getTo().getWorld().getSpawnLocation());
+            if(e.getFrom().getBlockX() > 25000.0 || e.getFrom().getBlockZ() > 25000.0){
+                e.setCancelled(true);
+            } else {
+
+                Location l = e.getTo().getWorld().getSpawnLocation();
+                l.setX(100.0);
+                l.setY(51.0);
+                l.setZ(0.0);
+                e.getPlayer().teleport(e.getTo().getWorld().getSpawnLocation());
+            }
         }
     }
 
@@ -114,6 +120,13 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
     }
 
+    @EventHandler
+    public void hopperThing( InventoryMoveItemEvent e ) {
+        if (verificarIlegal(e.getItem())) {
+            e.getItem().setAmount(0);
+        }
+    }
+
     public boolean verificarIlegal(ItemStack item){
         if(item != null){
             if(item.getType() == Material.FIREWORK_ROCKET){
@@ -135,8 +148,4 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         return false;
     }
 
-
-    public int distanceBetweenPoints(int x1, int x2, int y1, int y2) {
-        return (int)Math.sqrt(((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
-    }
 }

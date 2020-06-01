@@ -1,10 +1,13 @@
 package com.danimania.mineanarquia.itemsilegales.Mineanarquia;
 
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.reflect.StructureModifier;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -48,10 +51,24 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         this.protocolManager.addPacketListener((PacketListener)new PacketAdapter((Plugin)this, new PacketType[] { PacketType.Play.Server.NAMED_SOUND_EFFECT }) {
             public void onPacketSending(PacketEvent event) {
 
-                // cancelar sonidos nombrados? puede ser un poco basto
-                // hay que testear que sonidos se mandan.
-                // por seguridad el server sera silencioso durante unas horas
-                event.setCancelled(true);
+                // Sonidos que esten a mas de 250 del jugador seran cancelados? quien sabe
+                try {
+                    final Player player = event.getPlayer();
+                    PacketContainer packet = event.getPacket();
+                    StructureModifier<Integer> ints = packet.getIntegers();
+                    int xPacket =  ints.read(0) / 8;
+                    int zPacket = ints.read(2) / 8;
+                    double xPlayer = player.getLocation().getBlockX();
+                    double zPlayer = player.getLocation().getBlockZ();
+
+                    double xDif = Math.abs(xPlayer - xPacket);
+                    double yDif = Math.abs(zPlayer - zPacket);
+                    if(xDif > 250 | yDif > 250) {
+                        event.setCancelled(true);
+                    }
+                }
+                catch(Exception e) {}
+
 
             }
         });

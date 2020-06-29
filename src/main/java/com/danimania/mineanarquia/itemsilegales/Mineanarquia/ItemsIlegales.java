@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -30,6 +31,7 @@ import com.comphenix.protocol.events.PacketListener;
 
 import java.util.Random;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 
 public final class ItemsIlegales extends JavaPlugin implements Listener {
 
@@ -44,7 +46,16 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
+            public void run() {
+                //Every tick the code put here will perform
 
+                for (Player p: Bukkit.getServer().getOnlinePlayers()) {
+                    checkPlayerSpeed(p);
+                }
+            }
+
+        }, 0L, 1L);
 
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         // antithunder
@@ -151,7 +162,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 if(fwm.getPower()>3){
                     return true;
                 }
-            }else if(item.getType() == Material.END_PORTAL_FRAME){
+            }else if(item.getType() == Material.END_PORTAL_FRAME || item.getType() == Material.BEDROCK){
                 return true;
             }else if(item.getType() == Material.SPLASH_POTION){
                 PotionMeta meta = (PotionMeta) item.getItemMeta();
@@ -164,5 +175,27 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
         return false;
     }
+
+
+
+    public void checkPlayerSpeed( Player p) {
+        Vector vectorVelocity = p.getVelocity();
+        if(vectorVelocity.length() > 33.0) {
+            p.kickPlayer("GABO SPEEDHACK SRHECK: YOUR SPEED IS MORE THAN 33");
+        }
+        Entity mount = p.getVehicle();
+
+
+        if( mount != null ) {
+            Vector mountSpeed = mount.getVelocity();
+            if(mountSpeed.length() > 33.0) {
+
+                p.kickPlayer("GABO SPEEDHACK SRHECK: YOUR SPEED IS MORE THAN 33");
+
+            }
+        }
+    }
+
+
 
 }

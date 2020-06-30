@@ -4,3 +4,7 @@ main: com.danimania.mineanarquia.itemsilegales.Mineanarquia.ItemsIlegales
 api-version: 1.15
 authors: [danimania, gabboman]
 depend: [ProtocolLib]
+commands:
+  verificarpotis:
+    usage: /verificarpotis [usuario]
+    description: Verifica las pociones de un usuario

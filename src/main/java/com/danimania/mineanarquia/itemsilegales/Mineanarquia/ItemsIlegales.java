@@ -117,11 +117,13 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 e.setCancelled(true);
             } else {
 
-                Location l = e.getTo().getWorld().getSpawnLocation();
+                /*Location l = e.getTo().getWorld().getSpawnLocation();
                 l.setX(100.0);
                 l.setY(51.0);
                 l.setZ(0.0);
                 e.getPlayer().teleport(e.getTo().getWorld().getSpawnLocation());
+                */
+
             }
         }
     }

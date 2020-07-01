@@ -2,19 +2,21 @@ package com.danimania.mineanarquia.itemsilegales.Mineanarquia;
 
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.reflect.StructureModifier;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -37,8 +39,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     private ProtocolManager protocolManager;
 
-
-
     public void onLoad() {
         protocolManager = ProtocolLibrary.getProtocolManager();
 
@@ -52,6 +52,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
                 for (Player p: Bukkit.getServer().getOnlinePlayers()) {
                     checkPlayerSpeed(p);
+                    verificarPocionesIlegales(p);
                 }
             }
 
@@ -103,6 +104,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void alEntrar(PlayerJoinEvent e){
+        verificarPocionesIlegales(e.getPlayer());
         for(ItemStack i : e.getPlayer().getInventory().getContents()){
             if(verificarIlegal(i)){
                 i.setAmount(0);
@@ -142,18 +144,20 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         for(ItemStack i : e.getInventory().getContents()){
             if(verificarIlegal(i)){
                 ilegales = true;
+                if(e.getInventory().getType() == InventoryType.HOPPER){
+                    for(ItemStack it : e.getPlayer().getInventory().getContents()){
+                        if(!verificarIlegal(it)){
+                            if(it != null){
+                                e.getPlayer().getWorld().dropItem(e.getPlayer().getLocation(), it);
+                            }
+                        }
+                    }
+                }
                 i.setAmount(0);
             }
         }
         if(ilegales){
             Bukkit.getServer().getLogger().info("Items ilegales. Jugador: "+e.getPlayer().getName()+". X"+e.getPlayer().getLocation().getX()+", Y"+e.getPlayer().getLocation().getY()+", Z"+e.getPlayer().getLocation().getZ());
-        }
-    }
-
-    @EventHandler
-    public void hopperThing( InventoryMoveItemEvent e ) {
-        if (verificarIlegal(e.getItem())) {
-            e.getItem().setAmount(0);
         }
     }
 
@@ -198,6 +202,43 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
     }
 
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(label.equalsIgnoreCase("verificarpotis")){
+            if(!sender.hasPermission("ilegales.verpotis")){
+                sender.sendMessage(ChatColor.RED+"No tienes permisos crack. Fabrimania on top!");
+            }else{
+                if(args.length != 1){
+                    sender.sendMessage("Así no se usa el comando. Prueba /verificarpotis [Nombre de usuario]");
+                }else{
+                    Player p = Bukkit.getPlayer(args[0]);
+                    if (p != null) {
+                        for(PotionEffect pe : p.getActivePotionEffects()){
+                            getLogger().info(p.getName()+": Duración "+pe.getDuration()+" Nivel "+pe.getAmplifier()+" Tipo "+pe.getType().getName());
+                        }
+                    } else {
+                        sender.sendMessage(ChatColor.RED+"El jugador no existe o no está conectado.");
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
+    public void verificarPocionesIlegales(Player p){
+        if(p.getActivePotionEffects().isEmpty()){
+            return;
+        }
+        for(PotionEffect pe : p.getActivePotionEffects()){
+            if(pe.getDuration()>8500 || pe.getAmplifier() > 2){
+                for(PotionEffect effect : p.getActivePotionEffects())
+                {
+                    p.removePotionEffect(effect.getType());
+                }
+                getLogger().info(p.getName()+" ha usado pociones ilegales en "+p.getLocation().getX()+" "+p.getLocation().getZ());
+                getLogger().info(p.getName()+": Duración "+pe.getDuration()+" Nivel "+pe.getAmplifier()+" Tipo "+pe.getType().getName());
+            }
+        }
+    }
 
 }

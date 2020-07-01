@@ -166,7 +166,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             }else if(item.getType() == Material.SPLASH_POTION){
                 PotionMeta meta = (PotionMeta) item.getItemMeta();
                 for(PotionEffect pe : meta.getCustomEffects()){
-                    if(pe.getAmplifier()>5){
+                    if(pe.getAmplifier()>2){
                         return true;
                     }
                 }

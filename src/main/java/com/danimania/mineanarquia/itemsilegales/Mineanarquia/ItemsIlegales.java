@@ -159,7 +159,9 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 if(fwm.getPower()>3){
                     return true;
                 }
-            }else if(item.getType() == Material.END_PORTAL_FRAME || item.getType() == Material.BEDROCK){
+            }else if(item.getType() == Material.END_PORTAL_FRAME || item.getType() == Material.BEDROCK
+                ||item.getType() == Material.COMMAND_BLOCK || item.getType() == Material.BARRIER
+            ){
                 return true;
             }else if(item.getType() == Material.SPLASH_POTION){
                 PotionMeta meta = (PotionMeta) item.getItemMeta();
@@ -197,7 +199,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(label.equalsIgnoreCase("verificarpotis")){
             if(!sender.hasPermission("ilegales.verpotis")){
-                sender.sendMessage(ChatColor.RED+"No tienes permisos crack");
+                sender.sendMessage(ChatColor.RED+"No tienes permisos crack. Fabrimania on top!");
             }else{
                 if(args.length != 1){
                     sender.sendMessage("Así no se usa el comando. Prueba /verificarpotis [Nombre de usuario]");

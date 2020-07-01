@@ -117,15 +117,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         if(e.getTo().getWorld().getEnvironment().equals(World.Environment.THE_END)){
             if(e.getFrom().getBlockX() > 25000.0 || e.getFrom().getBlockZ() > 25000.0){
                 e.setCancelled(true);
-            } else {
-
-                /*Location l = e.getTo().getWorld().getSpawnLocation();
-                l.setX(100.0);
-                l.setY(51.0);
-                l.setZ(0.0);
-                e.getPlayer().teleport(e.getTo().getWorld().getSpawnLocation());
-                */
-
             }
         }
     }
@@ -206,7 +197,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if(label.equalsIgnoreCase("verificarpotis")){
             if(!sender.hasPermission("ilegales.verpotis")){
-                sender.sendMessage(ChatColor.RED+"No tienes permisos crack. Fabrimania on top!");
+                sender.sendMessage(ChatColor.RED+"No tienes permisos crack");
             }else{
                 if(args.length != 1){
                     sender.sendMessage("Así no se usa el comando. Prueba /verificarpotis [Nombre de usuario]");

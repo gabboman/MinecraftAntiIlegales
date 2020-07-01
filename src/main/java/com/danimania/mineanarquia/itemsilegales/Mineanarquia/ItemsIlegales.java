@@ -6,14 +6,17 @@ import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -139,6 +142,15 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         for(ItemStack i : e.getInventory().getContents()){
             if(verificarIlegal(i)){
                 ilegales = true;
+                if(e.getInventory().getType() == InventoryType.HOPPER){
+                    for(ItemStack it : e.getPlayer().getInventory().getContents()){
+                        if(!verificarIlegal(it)){
+                            if(it != null){
+                                e.getPlayer().getWorld().dropItem(e.getPlayer().getLocation(), it);
+                            }
+                        }
+                    }
+                }
                 i.setAmount(0);
             }
         }
@@ -226,6 +238,5 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             }
         }
     }
-
 
 }

@@ -33,6 +33,7 @@ import com.comphenix.protocol.events.PacketListener;
 
 import java.util.Random;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 public final class ItemsIlegales extends JavaPlugin implements Listener {
@@ -166,7 +167,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             }else if(item.getType() == Material.SPLASH_POTION){
                 PotionMeta meta = (PotionMeta) item.getItemMeta();
                 for(PotionEffect pe : meta.getCustomEffects()){
-                    if(pe.getAmplifier()>2){
+                    if(pe.getAmplifier()>4){
                         return true;
                     }
                 }
@@ -223,7 +224,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             return;
         }
         for(PotionEffect pe : p.getActivePotionEffects()){
-            if(pe.getDuration()>8500 || pe.getAmplifier() > 2){
+            if(pe.getDuration()>8500 || pe.getAmplifier() > 3){
                 for(PotionEffect effect : p.getActivePotionEffects())
                 {
                     p.removePotionEffect(effect.getType());

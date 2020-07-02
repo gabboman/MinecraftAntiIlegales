@@ -183,9 +183,8 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
 
     public void checkPlayerSpeed( Player p) {
-        Vector vectorVelocity = p.getVelocity();
-        if(vectorVelocity.length() > 33.0) {
-            p.kickPlayer("GABO SPEEDHACK SRHECK: YOUR SPEED IS MORE THAN 33");
+        if(p.getFlySpeed() > 34.0) {
+            p.kickPlayer("Baja la velocidad crack.");
         }
         Entity mount = p.getVehicle();
 
@@ -193,9 +192,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         if( mount != null ) {
             Vector mountSpeed = mount.getVelocity();
             if(mountSpeed.length() > 33.0) {
-
-                p.kickPlayer("GABO SPEEDHACK SRHECK: YOUR SPEED IS MORE THAN 33");
-
+                p.kickPlayer("Baja la velocidad crack.");
             }
         }
     }
@@ -214,6 +211,21 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                         for(PotionEffect pe : p.getActivePotionEffects()){
                             getLogger().info(p.getName()+": Duración "+pe.getDuration()+" Nivel "+pe.getAmplifier()+" Tipo "+pe.getType().getName());
                         }
+                    } else {
+                        sender.sendMessage(ChatColor.RED+"El jugador no existe o no está conectado.");
+                    }
+                }
+            }
+        }else if(label.equalsIgnoreCase("verificarspeed")){
+            if(sender.hasPermission("ilegales.verspeed")){
+                sender.sendMessage(ChatColor.RED+"No tienes permisos.");
+            }else{
+                if(args.length != 1){
+                    sender.sendMessage("Así no se usa el comando. Prueba /verificarspeed [Nombre de usuario]");
+                }else{
+                    Player p = Bukkit.getPlayer(args[0]);
+                    if(p != null){
+                        sender.sendMessage("El jugador va a la velocidad "+p.getFlySpeed()+" en X:"+p.getLocation().getX()+" Z:"+p.getLocation().getZ());
                     } else {
                         sender.sendMessage(ChatColor.RED+"El jugador no existe o no está conectado.");
                     }

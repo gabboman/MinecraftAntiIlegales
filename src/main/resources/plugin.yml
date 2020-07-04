@@ -8,3 +8,6 @@ commands:
   verificarpotis:
     usage: /verificarpotis [usuario]
     description: Verifica las pociones de un usuario
+  verificarspeed:
+      usage: /verificarspeed [usuario]
+      description: Verifica la velocidad de un usuario

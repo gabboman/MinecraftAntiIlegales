@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
@@ -103,6 +104,21 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             }
         }
     }
+
+    @EventHandler
+    public void hopperEvent (InventoryMoveItemEvent e) {
+        if (e.getInitiator().getType() == InventoryType.HOPPER) {
+            e.setCancelled(true);
+
+        }
+
+        if(verificarIlegal(e.getItem())) {
+            e.setCancelled(true);
+            e.getItem().setAmount(0);
+        }
+    }
+
+
     @EventHandler
     public void alEntrar(PlayerJoinEvent e){
         verificarPocionesIlegales(e.getPlayer());
@@ -134,6 +150,15 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
     }
 
+
+    @EventHandler
+    public void alColocarBloque(BlockPlaceEvent e) {
+        ItemStack items = new ItemStack(e.getBlock().getType());
+        if(verificarIlegal(items)) {
+            e.setCancelled(true);
+            e.getPlayer().setHealth(1);
+        }
+    }
     @EventHandler
     public void alAbrir(InventoryOpenEvent e){
 

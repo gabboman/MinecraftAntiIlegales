@@ -116,8 +116,10 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @EventHandler
     public void alPortalUsar(PlayerPortalEvent e) {
         if(e.getTo().getWorld().getEnvironment().equals(World.Environment.THE_END)){
-            if(e.getFrom().getBlockX() > 25000.0 || e.getFrom().getBlockZ() > 25000.0){
+            if(Math.abs(e.getFrom().getBlockX()) > 25000.0 || Math.abs(e.getFrom().getBlockZ()) > 25000.0){
                 e.setCancelled(true);
+                e.getPlayer().setHealth(1);
+                e.getPlayer().kickPlayer("tu portal no me gusta. En el futruo esto te matara");
             }
         }
     }
@@ -127,29 +129,41 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     public void romperEndPortal(BlockBreakEvent e){
         if(e.getBlock().getType() == Material.END_PORTAL){
             e.setCancelled(true);
+            e.getPlayer().setHealth(1);
+            e.getPlayer().kickPlayer("FUN FACT: la proxima vez podrias morir");
         }
     }
 
     @EventHandler
     public void alAbrir(InventoryOpenEvent e){
+
         boolean ilegales = false;
+        if(e.getInventory().getType() == InventoryType.HOPPER){
+            for(ItemStack it : e.getPlayer().getInventory().getContents()){
+                if(verificarIlegal(it)){
+                    it.setAmount((0));
+                    ilegales = true;
+                }
+            }
+        }
+
+
         for(ItemStack i : e.getInventory().getContents()){
             if(verificarIlegal(i)){
                 ilegales = true;
-                if(e.getInventory().getType() == InventoryType.HOPPER){
-                    for(ItemStack it : e.getPlayer().getInventory().getContents()){
-                        if(!verificarIlegal(it)){
-                            if(it != null){
-                                e.getPlayer().getWorld().dropItem(e.getPlayer().getLocation(), it);
-                            }
-                        }
-                    }
-                }
                 i.setAmount(0);
             }
+
+
         }
         if(ilegales){
             Bukkit.getServer().getLogger().info("Items ilegales. Jugador: "+e.getPlayer().getName()+". X"+e.getPlayer().getLocation().getX()+", Y"+e.getPlayer().getLocation().getY()+", Z"+e.getPlayer().getLocation().getZ());
+            e.getPlayer().setHealth(1);
+        }
+
+        if(e.getInventory().getType() == InventoryType.SHULKER_BOX || e.getInventory().getType() == InventoryType.DISPENSER || e.getInventory().getType() == InventoryType.HOPPER) {
+            e.setCancelled(true);
+            e.getPlayer().sendMessage("SHULKERS, HOPPERS Y DISPENSERS DESACTIVADOS TEMPORALMENTE");
         }
     }
 
@@ -179,9 +193,9 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
 
     public void checkPlayerSpeed( Player p) {
-        Vector vectorVelocity = p.getVelocity();
-        if(vectorVelocity.length() > 33.0) {
-            p.kickPlayer("GABO SPEEDHACK SRHECK: YOUR SPEED IS MORE THAN 33");
+        float speed = p.getFlySpeed();
+        if(speed > 33.0) {
+            p.kickPlayer("SPEEDHACK SRHECK: YOUR SPEED IS MORE THAN 33");
         }
         Entity mount = p.getVehicle();
 

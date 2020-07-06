@@ -132,10 +132,14 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @EventHandler
     public void alPortalUsar(PlayerPortalEvent e) {
         if(e.getTo().getWorld().getEnvironment().equals(World.Environment.THE_END)){
+            if(e.getFrom().getWorld().getEnvironment().equals(World.Environment.NETHER)){
+                e.setCancelled(true);
+                e.getPlayer().setHealth(0);
+            }
             if(Math.abs(e.getFrom().getBlockX()) > 25000.0 || Math.abs(e.getFrom().getBlockZ()) > 25000.0){
                 e.setCancelled(true);
                 e.getPlayer().setHealth(1);
-                e.getPlayer().kickPlayer("tu portal no me gusta. En el futruo esto te matara");
+                // e.getPlayer().kickPlayer("tu portal no me gusta. En el futruo esto te matara");
             }
         }
     }

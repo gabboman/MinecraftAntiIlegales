@@ -106,16 +106,18 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     }
 
     @EventHandler
-    public void hopperEvent (InventoryMoveItemEvent e) {
-        if (e.getInitiator().getType() == InventoryType.HOPPER) {
-            e.setCancelled(true);
-
-        }
-
+    public void moveObjectFromInventory (InventoryMoveItemEvent e) {
         if(verificarIlegal(e.getItem())) {
-            e.setCancelled(true);
             e.getItem().setAmount(0);
+        } else {
+            if (
+                    e.getSource().getType() == InventoryType.SHULKER_BOX && e.getDestination().getType() == InventoryType.HOPPER
+            ) {
+              e.setCancelled(true);
+            }
         }
+
+
     }
 
 
@@ -190,10 +192,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             e.getPlayer().setHealth(1);
         }
 
-        if(e.getInventory().getType() == InventoryType.SHULKER_BOX || e.getInventory().getType() == InventoryType.DISPENSER || e.getInventory().getType() == InventoryType.HOPPER) {
-            e.setCancelled(true);
-            e.getPlayer().sendMessage("SHULKERS, HOPPERS Y DISPENSERS DESACTIVADOS TEMPORALMENTE");
-        }
     }
 
     public boolean verificarIlegal(ItemStack item){

@@ -32,7 +32,8 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 
 
-import java.util.Random;
+import java.util.*;
+
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
@@ -40,7 +41,7 @@ import org.bukkit.util.Vector;
 public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     private ProtocolManager protocolManager;
-
+    private Set<Material> materialesIlegales;
     public void onLoad() {
         protocolManager = ProtocolLibrary.getProtocolManager();
 
@@ -48,6 +49,26 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        materialesIlegales = new HashSet<Material>();
+        // creamos los materiales ilegales
+        materialesIlegales.add(Material.BEDROCK);
+        materialesIlegales.add(Material.BARRIER);
+        materialesIlegales.add(Material.STRUCTURE_VOID);
+        materialesIlegales.add(Material.SPAWNER);
+
+        materialesIlegales.add(Material.END_PORTAL_FRAME);
+        materialesIlegales.add(Material.END_PORTAL);
+
+        // vamos a quitar los spawner egg no?
+
+        List<Material> materials = Arrays.asList(Material.values());
+        for (Material m: materials) {
+            if (m.name().contains("SPAWN_EGG") || m.name().contains("COMMAND")
+                || m.name().contains("STRUCTURE")) {
+                materialesIlegales.add(m);
+            }
+        }
+
         Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
             public void run() {
                 //Every tick the code put here will perform
@@ -201,8 +222,8 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 if(fwm.getPower()>3){
                     return true;
                 }
-            }else if(item.getType() == Material.END_PORTAL_FRAME || item.getType() == Material.BEDROCK
-                ||item.getType() == Material.COMMAND_BLOCK || item.getType() == Material.BARRIER
+            }else if(
+                    materialesIlegales.contains(item.getType())
             ){
                 return true;
             }else if(item.getType() == Material.SPLASH_POTION){
@@ -217,7 +238,12 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         return false;
     }
 
+    public boolean verificarBloqueIlegal (Material block) {
+        Boolean res = false;
 
+
+        return res;
+    }
 
     public void checkPlayerSpeed( Player p) {
         float speed = p.getFlySpeed();

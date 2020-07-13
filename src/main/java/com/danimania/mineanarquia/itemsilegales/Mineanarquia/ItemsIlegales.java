@@ -288,18 +288,35 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     public void verificarPocionesIlegales(Player p){
         if(p.getActivePotionEffects().isEmpty()){
+            // dani, this is not a good code practice! but i have a thing called life
             return;
         }
         for(PotionEffect pe : p.getActivePotionEffects()){
             if(pe.getDuration()>8500 || pe.getAmplifier() > 3){
                 for(PotionEffect effect : p.getActivePotionEffects())
-                {
+                if (checkIllegalPotionEffect(pe)){
                     p.removePotionEffect(effect.getType());
                 }
                 getLogger().info(p.getName()+" ha usado pociones ilegales en "+p.getLocation().getX()+" "+p.getLocation().getZ());
                 getLogger().info(p.getName()+": Duración "+pe.getDuration()+" Nivel "+pe.getAmplifier()+" Tipo "+pe.getType().getName());
+                p.sendMessage("Hola! parece que has usado una pocion ilegal. Puede que sea un bug en el codigo escrito por el glorioso admin.");
+                p.sendMessage("Por favor, envia un reporte del error a monarca@minecraftanarquia.xyz");
+
             }
         }
+    }
+
+    public boolean checkIllegalPotionEffect( PotionEffect pe) {
+        Boolean res = false;
+        // Revision inicial rapida.
+        res = pe.getDuration()>9600 || pe.getAmplifier() > 4;
+
+
+        if (pe.getType() == PotionEffectType.BAD_OMEN) {
+            res = false;
+        }
+
+        return res;
     }
 
 }

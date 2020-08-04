@@ -69,18 +69,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             }
         }
 
-        Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
-            public void run() {
-                //Every tick the code put here will perform
-
-                for (Player p: Bukkit.getServer().getOnlinePlayers()) {
-                    checkPlayerSpeed(p);
-                    verificarPocionesIlegales(p);
-                }
-            }
-
-        }, 0L, 1L);
-
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
         // antithunder
         this.protocolManager.addPacketListener((PacketListener)new PacketAdapter((Plugin)this, new PacketType[] { PacketType.Play.Server.NAMED_SOUND_EFFECT }) {
@@ -144,11 +132,28 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     @EventHandler
     public void alEntrar(PlayerJoinEvent e){
-        verificarPocionesIlegales(e.getPlayer());
+        // verificarPocionesIlegales(e.getPlayer());
         for(ItemStack i : e.getPlayer().getInventory().getContents()){
             if(verificarIlegal(i)){
-                i.setAmount(0);
+                e.getPlayer().setHealth(1.0);
+                kickPlayer(e.getPlayer());
+
             }
+        }
+
+        //verificar EQUIPO
+        for(ItemStack i : e.getPlayer().getInventory().getArmorContents()){
+            if(verificarIlegal(i)){
+                e.getPlayer().setHealth(1.0);
+                // i.setAmount(0);
+                kickPlayer(e.getPlayer());
+            }
+        }
+
+        if(verificarIlegal(e.getPlayer().getInventory().getItemInOffHand())){
+            e.getPlayer().setHealth(1.0);
+            // i.setAmount(0);
+            kickPlayer(e.getPlayer());
         }
     }
 
@@ -172,8 +177,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     public void romperEndPortal(BlockBreakEvent e){
         if(e.getBlock().getType() == Material.END_PORTAL){
             e.setCancelled(true);
-            e.getPlayer().setHealth(1);
-            e.getPlayer().kickPlayer("FUN FACT: la proxima vez podrias morir");
         }
     }
 
@@ -234,89 +237,23 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                     }
                 }
             }
+
+            if(item.getType() == Material.TOTEM_OF_UNDYING){
+                if(item.getAmount()>1){
+                    return true;
+                }
+            }
         }
         return false;
     }
-
-    public boolean verificarBloqueIlegal (Material block) {
-        Boolean res = false;
-
-
-        return res;
-    }
-
     public void checkPlayerSpeed( Player p) {
-        float speed = p.getFlySpeed();
-        if(speed > 33.0) {
-            p.kickPlayer("SPEEDHACK SRHECK: YOUR SPEED IS MORE THAN 33");
-        }
-        Entity mount = p.getVehicle();
 
-
-        if( mount != null ) {
-            Vector mountSpeed = mount.getVelocity();
-            if(mountSpeed.length() > 33.0) {
-
-                p.kickPlayer("GABO SPEEDHACK SRHECK: YOUR SPEED IS MORE THAN 33");
-
-            }
-        }
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(label.equalsIgnoreCase("verificarpotis")){
-            if(!sender.hasPermission("ilegales.verpotis")){
-                sender.sendMessage(ChatColor.RED+"No tienes permisos crack. Fabrimania on top!");
-            }else{
-                if(args.length != 1){
-                    sender.sendMessage("Así no se usa el comando. Prueba /verificarpotis [Nombre de usuario]");
-                }else{
-                    Player p = Bukkit.getPlayer(args[0]);
-                    if (p != null) {
-                        for(PotionEffect pe : p.getActivePotionEffects()){
-                            getLogger().info(p.getName()+": Duración "+pe.getDuration()+" Nivel "+pe.getAmplifier()+" Tipo "+pe.getType().getName());
-                        }
-                    } else {
-                        sender.sendMessage(ChatColor.RED+"El jugador no existe o no está conectado.");
-                    }
-                }
-            }
-        }
-        return true;
+    public void kickPlayer( Player p) {
+    p.getInventory().clear();
     }
 
-    public void verificarPocionesIlegales(Player p){
-        if(p.getActivePotionEffects().isEmpty()){
-            // dani, this is not a good code practice! but i have a thing called life
-            return;
-        }
-        for(PotionEffect pe : p.getActivePotionEffects()){
-            if(pe.getDuration()>8500 || pe.getAmplifier() > 3){
-                for(PotionEffect effect : p.getActivePotionEffects())
-                if (checkIllegalPotionEffect(pe)){
-                    p.removePotionEffect(effect.getType());
-                }
-                getLogger().info(p.getName()+" ha usado pociones ilegales en "+p.getLocation().getX()+" "+p.getLocation().getZ());
-                getLogger().info(p.getName()+": Duración "+pe.getDuration()+" Nivel "+pe.getAmplifier()+" Tipo "+pe.getType().getName());
-                p.sendMessage("Hola! parece que has usado una pocion ilegal. Puede que sea un bug en el codigo escrito por el glorioso admin.");
-                p.sendMessage("Por favor, envia un reporte del error a monarca@minecraftanarquia.xyz");
 
-            }
-        }
-    }
-
-    public boolean checkIllegalPotionEffect( PotionEffect pe) {
-        Boolean res = false;
-        // Revision inicial rapida.
-        res = pe.getDuration()>9600 || pe.getAmplifier() > 4;
-
-
-        if (pe.getType() == PotionEffectType.BAD_OMEN) {
-            res = false;
-        }
-
-        return res;
-    }
 
 }

@@ -7,4 +7,4 @@ depend: [ProtocolLib]
 commands:
   verificarpotis:
     usage: /verificarpotis [usuario]
-    description: Verifica las pociones de un usuario
+    description: Verifica las pociones de un usuario. Comando legacy by danimania

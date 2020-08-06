@@ -42,6 +42,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     private ProtocolManager protocolManager;
     private Set<Material> materialesIlegales;
+    private Set<Material> stacksIlegales;
     public void onLoad() {
         protocolManager = ProtocolLibrary.getProtocolManager();
 
@@ -50,6 +51,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         materialesIlegales = new HashSet<Material>();
+        stacksIlegales = new HashSet<Material>();
         // creamos los materiales ilegales
         materialesIlegales.add(Material.BEDROCK);
         materialesIlegales.add(Material.BARRIER);
@@ -63,10 +65,22 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
         List<Material> materials = Arrays.asList(Material.values());
         for (Material m: materials) {
+            // bloques ilegales. su existencia debe ser destruida
             if (m.name().contains("SPAWN_EGG") || m.name().contains("COMMAND")
                 || m.name().contains("STRUCTURE")) {
                 materialesIlegales.add(m);
             }
+
+            if (m.name().contains("SWORD") || m.name().contains("BOOTS") ||
+                    m.name().contains("LEGGIN") || m.name().contains("CHESTPLATE") ||
+                    m.name().contains("HELMET") || m.name().contains("AXE") ||
+                    m.name().contains("HOE") || m.name().contains("SHIELD") ||
+                    m.name().contains("TOTEM") ) {
+                stacksIlegales.add(m);
+            }
+
+            // stacks ilegales. si hay mas de uno deben ser destruidos
+
         }
 
         Bukkit.getServer().getPluginManager().registerEvents(this, this);
@@ -238,7 +252,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 }
             }
 
-            if(item.getType() == Material.TOTEM_OF_UNDYING){
+            if( stacksIlegales.contains(item.getType())){
                 if(item.getAmount()>1){
                     return true;
                 }
@@ -246,6 +260,13 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
         return false;
     }
+
+    public Boolean ilegalStack(ItemStack item){
+        Boolean res = false;
+
+        return res;
+    }
+
     public void checkPlayerSpeed( Player p) {
 
     }

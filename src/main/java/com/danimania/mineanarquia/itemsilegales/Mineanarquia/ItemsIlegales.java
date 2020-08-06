@@ -5,6 +5,7 @@ import com.comphenix.protocol.reflect.StructureModifier;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
@@ -254,6 +255,13 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
             if( stacksIlegales.contains(item.getType())){
                 if(item.getAmount()>1){
+                    return true;
+                }
+            }
+
+            Map <Enchantment, Integer> enchants = item.getEnchantments();
+            for (Enchantment e: enchants.keySet()) {
+                if (e.getMaxLevel() < enchants.get(e)){
                     return true;
                 }
             }

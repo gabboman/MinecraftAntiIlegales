@@ -151,7 +151,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         for(ItemStack i : e.getPlayer().getInventory().getContents()){
             if(verificarIlegal(i)){
                 e.getPlayer().setHealth(1.0);
-                kickPlayer(e.getPlayer());
+                i.setAmount(0);
 
             }
         }
@@ -160,15 +160,13 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         for(ItemStack i : e.getPlayer().getInventory().getArmorContents()){
             if(verificarIlegal(i)){
                 e.getPlayer().setHealth(1.0);
-                // i.setAmount(0);
-                kickPlayer(e.getPlayer());
+                i.setAmount(0);
             }
         }
 
         if(verificarIlegal(e.getPlayer().getInventory().getItemInOffHand())){
             e.getPlayer().setHealth(1.0);
-            // i.setAmount(0);
-            kickPlayer(e.getPlayer());
+            e.getPlayer().getInventory().clear();
         }
     }
 
@@ -198,6 +196,11 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     @EventHandler
     public void alColocarBloque(BlockPlaceEvent e) {
+        for(ItemStack i: e.getPlayer().getInventory()){
+            if (verificarIlegal(i)){
+                i.setAmount(0);
+            }
+        }
         ItemStack items = new ItemStack(e.getBlock().getType());
         if(verificarIlegal(items)) {
             e.setCancelled(true);
@@ -206,7 +209,11 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     }
     @EventHandler
     public void alAbrir(InventoryOpenEvent e){
-
+        for(ItemStack i: e.getPlayer().getInventory()){
+            if (verificarIlegal(i)){
+                i.setAmount(0);
+            }
+        }
         boolean ilegales = false;
         if(e.getInventory().getType() == InventoryType.HOPPER){
             for(ItemStack it : e.getPlayer().getInventory().getContents()){

@@ -1,12 +1,17 @@
 package com.danimania.mineanarquia.itemsilegales.Mineanarquia;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
-import org.bukkit.*;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -15,29 +20,20 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.inventory.InventoryEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.events.PacketListener;
-
 
 import java.util.*;
-
-import org.bukkit.plugin.Plugin;
-import org.bukkit.potion.PotionEffectType;
-import org.bukkit.util.Vector;
 
 public final class ItemsIlegales extends JavaPlugin implements Listener {
 
@@ -51,16 +47,18 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        materialesIlegales = new HashSet<Material>();
-        stacksIlegales = new HashSet<Material>();
+        materialesIlegales = new HashSet<>();
+        stacksIlegales = new HashSet<>();
         // creamos los materiales ilegales
         materialesIlegales.add(Material.BEDROCK);
         materialesIlegales.add(Material.BARRIER);
         materialesIlegales.add(Material.STRUCTURE_VOID);
         materialesIlegales.add(Material.SPAWNER);
-
+        materialesIlegales.add(Material.LEGACY_MONSTER_EGG);
+        materialesIlegales.add(Material.LEGACY_MONSTER_EGGS);
         materialesIlegales.add(Material.END_PORTAL_FRAME);
         materialesIlegales.add(Material.END_PORTAL);
+        materialesIlegales.add(Material.FIRE_CHARGE);
 
         // vamos a quitar los spawner egg no?
 
@@ -130,6 +128,14 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     }
 
     @EventHandler
+    public void jugadorInteractua(PlayerInteractEvent e){
+        if(verificarIlegal(e.getItem())) {
+            e.setCancelled(true);
+        }
+        revisarJugador(e.getPlayer());
+    }
+
+    @EventHandler
     public void moveObjectFromInventory (InventoryMoveItemEvent e) {
         if(verificarIlegal(e.getItem())) {
             e.getItem().setAmount(0);
@@ -148,30 +154,13 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @EventHandler
     public void alEntrar(PlayerJoinEvent e){
         // verificarPocionesIlegales(e.getPlayer());
-        for(ItemStack i : e.getPlayer().getInventory().getContents()){
-            if(verificarIlegal(i)){
-                e.getPlayer().setHealth(1.0);
-                i.setAmount(0);
+        revisarJugador(e.getPlayer());
 
-            }
-        }
-
-        //verificar EQUIPO
-        for(ItemStack i : e.getPlayer().getInventory().getArmorContents()){
-            if(verificarIlegal(i)){
-                e.getPlayer().setHealth(1.0);
-                i.setAmount(0);
-            }
-        }
-
-        if(verificarIlegal(e.getPlayer().getInventory().getItemInOffHand())){
-            e.getPlayer().setHealth(1.0);
-            e.getPlayer().getInventory().clear();
-        }
     }
 
     @EventHandler
     public void alPortalUsar(PlayerPortalEvent e) {
+        revisarJugador(e.getPlayer());
         if(e.getTo().getWorld().getEnvironment().equals(World.Environment.THE_END)){
             if(e.getFrom().getWorld().getEnvironment().equals(World.Environment.NETHER)){
                 e.setCancelled(true);
@@ -188,6 +177,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     @EventHandler
     public void romperEndPortal(BlockBreakEvent e){
+        revisarJugador(e.getPlayer());
         if(e.getBlock().getType() == Material.END_PORTAL){
             e.setCancelled(true);
         }
@@ -196,19 +186,18 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     @EventHandler
     public void alColocarBloque(BlockPlaceEvent e) {
-        for(ItemStack i: e.getPlayer().getInventory()){
-            if (verificarIlegal(i)){
-                i.setAmount(0);
-            }
-        }
+
         ItemStack items = new ItemStack(e.getBlock().getType());
         if(verificarIlegal(items)) {
             e.setCancelled(true);
             e.getPlayer().setHealth(1);
         }
+        revisarJugador(e.getPlayer());
     }
+
     @EventHandler
     public void alAbrir(InventoryOpenEvent e){
+        revisarJugador(e.getPlayer());
         for(ItemStack i: e.getPlayer().getInventory()){
             if (verificarIlegal(i)){
                 i.setAmount(0);
@@ -241,6 +230,32 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     }
 
     public boolean verificarIlegal(ItemStack item){
+        // nombre ilegal ilegal!
+        try {
+            if(item.getItemMeta().hasDisplayName()){
+                String nombre = item.getItemMeta().getDisplayName().toLowerCase();
+                if(nombre.contains("ilegal")
+                        || nombre.contains("danimania")
+                        || nombre.contains("fabrimania")
+                        || nombre.contains("backdo")
+                        || nombre.contains("32k")
+                        || nombre.contains("unnamed")
+                        || nombre.contains("wither")
+                        || nombre.contains("inso")
+                        || nombre.contains("stach")
+                        || nombre.contains("z4st")
+                        || nombre.contains("boom y")
+                        || nombre.contains("god")
+                        || nombre.contains("shacke")
+                ){
+                    return true;
+                }
+            }
+
+        } catch (Exception e){
+
+        }
+
         if(item != null){
             if(item.getType() == Material.FIREWORK_ROCKET){
                 FireworkMeta fwm = (FireworkMeta) item.getItemMeta();
@@ -286,8 +301,37 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     }
 
-    public void kickPlayer( Player p) {
+    public void kickPlayer( HumanEntity p) {
     p.getInventory().clear();
+    }
+
+
+    public void revisarJugador (HumanEntity p){
+
+        if(p.getHealth()> 30.0) {
+            p.setHealth(1.0);
+            p.getInventory().clear();
+        }
+        for(ItemStack i : p.getInventory().getContents()){
+            if(verificarIlegal(i)){
+                p.setHealth(1.0);
+                i.setAmount(0);
+
+            }
+        }
+
+        //verificar EQUIPO
+        for(ItemStack i : p.getInventory().getArmorContents()){
+            if(verificarIlegal(i)){
+                p.setHealth(1.0);
+                i.setAmount(0);
+            }
+        }
+
+        if(verificarIlegal(p.getInventory().getItemInOffHand())){
+            p.setHealth(1.0);
+            // p.getInventory().clear();
+        }
     }
 
 

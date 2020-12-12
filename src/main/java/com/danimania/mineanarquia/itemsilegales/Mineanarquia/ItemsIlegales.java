@@ -241,7 +241,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                         || nombre.contains("32k")
                         || nombre.contains("unnamed")
                         || nombre.contains("wither")
-                        || nombre.contains("inso")
                         || nombre.contains("stach")
                         || nombre.contains("z4st")
                         || nombre.contains("boom y")

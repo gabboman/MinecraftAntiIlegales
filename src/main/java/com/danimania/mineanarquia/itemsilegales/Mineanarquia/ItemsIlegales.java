@@ -9,6 +9,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.enchantments.Enchantment;
@@ -306,8 +307,15 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
 
     public void revisarJugador (HumanEntity p){
-
-        if(p.getHealth()> 30.0) {
+        // Verificar que no esta bajo el suelo del end
+        Location localizacion = p.getEyeLocation();
+        if(localizacion.getWorld().getName().toLowerCase().contains("nether")){
+            if(localizacion.getBlockY() < 0){
+                p.getInventory().clear();
+                p.setHealth(0.5);
+            }
+        }
+        if(p.getHealth()> 36.0) {
             p.setHealth(1.0);
             p.getInventory().clear();
         }

@@ -190,9 +190,16 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     public void alMoverse(PlayerMoveEvent e) {
         final Player p = e.getPlayer();
         Location localizacion = p.getEyeLocation();
-        if (localizacion.getWorld().getName().toLowerCase().contains("nether")) {
-            if ((localizacion.getBlockY() < 0 || localizacion.getBlockY() > 128) && 
-                    (Math.abs(localizacion.getBlockX()) > 100000 || Math.abs(localizacion.getBlockZ()) > 100000)) {
+        int x = Math.abs(localizacion.getBlockX());
+        int y = localizacion.getBlockY();
+        int z = Math.abs(localizacion.getBlockZ());
+        if (localizacion.getWorld().getName().toLowerCase().contains("nether") && (y < 0 || y > 128)) {
+            if (x == 99000 || z == 99000) {
+                p.teleport(new Location(p.getWorld(), x + 30, y, z + 30, 0, 0));
+                p.kickPlayer("Advertencia: Sal del techo (o del vacío) antes de llegar a 100k.\n(O MORIRAS!!!)");
+            }
+            if (x > 100000 || z > 100000) {
+                p.sendMessage("No subas al nether si estas en 100k o mas lejos!");
                 p.setHealth(0);
             }
         }

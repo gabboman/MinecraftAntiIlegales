@@ -26,6 +26,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
@@ -67,7 +68,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         for (Material m: materials) {
             // bloques ilegales. su existencia debe ser destruida
             if (m.name().contains("SPAWN_EGG") || m.name().contains("COMMAND")
-                || m.name().contains("STRUCTURE")) {
+                    || m.name().contains("STRUCTURE")) {
                 materialesIlegales.add(m);
             }
 
@@ -144,7 +145,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             if (
                     e.getSource().getType() == InventoryType.SHULKER_BOX && e.getDestination().getType() == InventoryType.HOPPER
             ) {
-              e.setCancelled(true);
+                e.setCancelled(true);
             }
         }
 
@@ -181,6 +182,26 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         revisarJugador(e.getPlayer());
         if(e.getBlock().getType() == Material.END_PORTAL){
             e.setCancelled(true);
+        }
+    }
+    
+    
+    @EventHandler
+    public void alMoverse(PlayerMoveEvent e) {
+        final Player p = e.getPlayer();
+        Location localizacion = p.getEyeLocation();
+        int x = Math.abs(localizacion.getBlockX());
+        int y = localizacion.getBlockY();
+        int z = Math.abs(localizacion.getBlockZ());
+        if (localizacion.getWorld().getName().toLowerCase().contains("nether") && (y < 0 || y > 128)) {
+            if (x == 99000 || z == 99000) {
+                p.teleport(new Location(p.getWorld(), x + 30, y, z + 30, 0, 0));
+                p.kickPlayer("Advertencia: Sal del techo (o del vacío) antes de llegar a 100k.\n(O MORIRÁS!!!)");
+            }
+            if (x > 100000 || z > 100000) {
+                p.sendMessage("No subas al techo o al vacío si estás en 100k o más lejos!");
+                p.setHealth(0);
+            }
         }
     }
 
@@ -302,19 +323,11 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     }
 
     public void kickPlayer( HumanEntity p) {
-    p.getInventory().clear();
+        p.getInventory().clear();
     }
 
 
     public void revisarJugador (HumanEntity p){
-        // Verificar que no esta bajo el suelo del end
-        Location localizacion = p.getEyeLocation();
-        if(localizacion.getWorld().getName().toLowerCase().contains("nether")){
-            if(localizacion.getBlockY() < 0){
-                p.getInventory().clear();
-                p.setHealth(0.5);
-            }
-        }
         if(p.getHealth()> 36.0) {
             p.setHealth(1.0);
             p.getInventory().clear();

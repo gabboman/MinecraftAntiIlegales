@@ -2,9 +2,6 @@ name: MineAnarquiaAntiIlegales
 version: ${project.version}
 main: com.danimania.mineanarquia.itemsilegales.Mineanarquia.ItemsIlegales
 api-version: 1.16
-authors: [danimania, gabboman]
+authors: [danimania, gabboman, nekiak]
 depend: [ProtocolLib]
 commands:
-  verificarpotis:
-    usage: /verificarpotis [usuario]
-    description: Verifica las pociones de un usuario. Comando legacy by danimania

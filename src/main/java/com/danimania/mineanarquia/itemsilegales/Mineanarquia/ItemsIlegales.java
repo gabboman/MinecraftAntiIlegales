@@ -189,20 +189,8 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @EventHandler
     public void alMoverse(PlayerMoveEvent e) {
         final Player p = e.getPlayer();
-        Location localizacion = p.getEyeLocation();
-        int x = Math.abs(localizacion.getBlockX());
-        int y = localizacion.getBlockY();
-        int z = Math.abs(localizacion.getBlockZ());
-        if (localizacion.getWorld().getName().toLowerCase().contains("nether") && (y < 0 || y > 128)) {
-            if (x == 99000 || z == 99000) {
-                p.teleport(new Location(p.getWorld(), x + 30, y, z + 30, 0, 0));
-                p.kickPlayer("Advertencia: Sal del techo (o del vacío) antes de llegar a 100k.\n(O MORIRÁS!!!)");
-            }
-            if (x > 100000 || z > 100000) {
-                p.sendMessage("No subas al techo o al vacío si estás en 100k o más lejos!");
-                p.setHealth(0);
-            }
-        }
+        revisarPosicionJugador(p);
+
     }
 
 
@@ -322,10 +310,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     }
 
-    public void kickPlayer( HumanEntity p) {
-        p.getInventory().clear();
-    }
-
 
     public void revisarJugador (HumanEntity p){
         if(p.getHealth()> 36.0) {
@@ -351,6 +335,25 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         if(verificarIlegal(p.getInventory().getItemInOffHand())){
             p.setHealth(1.0);
             // p.getInventory().clear();
+        }
+    }
+
+    public void revisarPosicionJugador(Player p) {
+        Location localizacion = p.getEyeLocation();
+        int x = Math.abs(localizacion.getBlockX());
+        int y = localizacion.getBlockY();
+        int z = Math.abs(localizacion.getBlockZ());
+        if (localizacion.getWorld().getName().toLowerCase().contains("nether") && (y < 0 || y > 128)) {
+            if (x > 99000 || z > 99000) {
+                // voy a simplemente molestar al usuario mandandole mensajes
+                p.sendMessage("Advertencia: Sal del techo (o del vacío) antes de llegar a 100k.\n(O MORIRÁS!!!)");
+            }
+            if (x > 100000 || z > 100000) {
+                // voy a simplemente molestar al usuario mandandole mensajes
+                p.getInventory().clear();
+                p.setHealth(0.0);
+            }
+
         }
     }
 

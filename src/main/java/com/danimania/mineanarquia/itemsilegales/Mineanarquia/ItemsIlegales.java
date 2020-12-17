@@ -199,7 +199,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 p.kickPlayer("Advertencia: Sal del techo (o del vacío) antes de llegar a 100k.\n(O MORIRÁS!!!)");
             }
             if (x > 100000 || z > 100000) {
-                p.sendMessage("No subas al techo o al vacío si estas en 100k o mas lejos!");
+                p.sendMessage("No subas al techo o al vacío si estás en 100k o más lejos!");
                 p.setHealth(0);
             }
         }

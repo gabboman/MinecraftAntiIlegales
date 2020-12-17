@@ -196,10 +196,10 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         if (localizacion.getWorld().getName().toLowerCase().contains("nether") && (y < 0 || y > 128)) {
             if (x == 99000 || z == 99000) {
                 p.teleport(new Location(p.getWorld(), x + 30, y, z + 30, 0, 0));
-                p.kickPlayer("Advertencia: Sal del techo (o del vacío) antes de llegar a 100k.\n(O MORIRAS!!!)");
+                p.kickPlayer("Advertencia: Sal del techo (o del vacío) antes de llegar a 100k.\n(O MORIRÁS!!!)");
             }
             if (x > 100000 || z > 100000) {
-                p.sendMessage("No subas al nether si estas en 100k o mas lejos!");
+                p.sendMessage("No subas al techo o al vacío si estas en 100k o mas lejos!");
                 p.setHealth(0);
             }
         }

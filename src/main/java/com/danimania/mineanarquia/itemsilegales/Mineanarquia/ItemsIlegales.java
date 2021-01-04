@@ -8,10 +8,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
@@ -117,6 +116,24 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player) {
+            final Player p = (Player) sender;
+            if (label.equalsIgnoreCase("cama")) {
+                try {
+                    String mensaje = p.getBedSpawnLocation() != null ? String.format("Tu cama está en X: %d Y: %d Z: %d.", p.getBedSpawnLocation().getBlockX(), p.getBedSpawnLocation().getBlockY(), p.getBedSpawnLocation().getBlockZ())
+                            : "No tienes cama.";
+                    p.sendMessage(ChatColor.DARK_GREEN + mensaje);
+                } catch (IllegalArgumentException e) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     // cuando se suelta un objeto (romper cofre etc)
@@ -356,7 +373,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
         }
     }
-
 
 
 }

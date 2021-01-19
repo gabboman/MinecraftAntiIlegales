@@ -361,11 +361,11 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         int y = localizacion.getBlockY();
         int z = Math.abs(localizacion.getBlockZ());
         if (localizacion.getWorld().getName().toLowerCase().contains("nether") && (y < 0 || y > 128)) {
-            if (x > 99000 || z > 99000) {
+            if (x > 990000 || z > 990000) {
                 // voy a simplemente molestar al usuario mandandole mensajes
-                p.sendMessage("Advertencia: Sal del techo (o del vacío) antes de llegar a 100k.\n(O MORIRÁS!!!)");
+                p.sendMessage("Advertencia: Sal del techo (o del vacío) antes de llegar a 1 millon.\n(O MORIRÁS!!!)");
             }
-            if (x > 100000 || z > 100000) {
+            if (x > 1000000 || z > 1000000) {
                 // voy a simplemente molestar al usuario mandandole mensajes
                 p.getInventory().clear();
                 p.setHealth(0.0);

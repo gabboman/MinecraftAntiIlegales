@@ -130,7 +130,23 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                             : "Tu nexo de reaparición está en X: " + p.getBedSpawnLocation().getBlockX() + " Y: " + p.getBedSpawnLocation().getBlockY() + " Z: " + p.getBedSpawnLocation().getBlockZ();
                     p.sendMessage(ChatColor.DARK_GREEN + mensaje);
                 } else {
-                    p.sendMessage(ChatColor.RED + "No tienes cama o nexo de reaparición.");
+                    p.sendMessage(ChatColor.RED + "No tienes cama.");
+                }
+            }
+            else if (label.equalsIgnoreCase("playtime")) {
+                if (args.length < 2) {
+                    Player p = (Player) sender;
+                    if (args.length == 1) {
+                        p = Bukkit.getPlayer(args[0]);
+                    }
+                    if (p != null) {
+                        double horas = (double) p.getStatistic(Statistic.PLAY_ONE_MINUTE) / 72000;
+                        sender.sendMessage(ChatColor.DARK_GREEN + p.getDisplayName() + " ha jugado " + Math.round(horas * 100.0) / 100.0 + " horas"); // redondeamos las horas a dos decimales
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "Ese jugador no esta online!");
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Has escrito mal el comando.");
                 }
             }
         }

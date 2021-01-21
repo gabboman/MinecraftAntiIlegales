@@ -130,7 +130,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                             : "Tu nexo de reaparición está en X: " + p.getBedSpawnLocation().getBlockX() + " Y: " + p.getBedSpawnLocation().getBlockY() + " Z: " + p.getBedSpawnLocation().getBlockZ();
                     p.sendMessage(ChatColor.DARK_GREEN + mensaje);
                 } else {
-                    p.sendMessage(ChatColor.RED + "No tienes cama.");
+                    p.sendMessage(ChatColor.RED + "No tienes cama o nexo de reaparición.");
                 }
             }
             else if (label.equalsIgnoreCase("playtime")) {

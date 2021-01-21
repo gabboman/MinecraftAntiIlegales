@@ -122,14 +122,15 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            final Player p = (Player) sender;
             if (label.equalsIgnoreCase("cama")) {
-                try {
-                    String mensaje = p.getBedSpawnLocation() != null ? String.format("Tu cama está en X: %d Y: %d Z: %d.", p.getBedSpawnLocation().getBlockX(), p.getBedSpawnLocation().getBlockY(), p.getBedSpawnLocation().getBlockZ())
-                            : "No tienes cama.";
+                Player p = (Player) sender;
+                if (p.getBedSpawnLocation() != null) {
+                    String mensaje = (p.getBedSpawnLocation().getWorld().getEnvironment().equals(World.Environment.NORMAL))
+                            ? "Tu cama está en X: " + p.getBedSpawnLocation().getBlockX() + " Y: " + p.getBedSpawnLocation().getBlockY() + " Z: " + p.getBedSpawnLocation().getBlockZ()
+                            : "Tu nexo de reaparición está en X: " + p.getBedSpawnLocation().getBlockX() + " Y: " + p.getBedSpawnLocation().getBlockY() + " Z: " + p.getBedSpawnLocation().getBlockZ();
                     p.sendMessage(ChatColor.DARK_GREEN + mensaje);
-                } catch (IllegalArgumentException e) {
-                    return false;
+                } else {
+                    p.sendMessage(ChatColor.RED + "No tienes cama o nexo de reaparición.");
                 }
             }
         }
@@ -279,7 +280,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             }
 
         } catch (Exception e){
-
+            
         }
 
         if(item != null){

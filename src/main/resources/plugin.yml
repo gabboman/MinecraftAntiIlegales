@@ -7,4 +7,5 @@ depend: [ProtocolLib]
 commands:
   cama:
     description: Checkea tu punto de respawn.
-
+  playtime:
+    description: Checkea tu tiempo de juego.

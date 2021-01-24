@@ -125,14 +125,31 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            final Player p = (Player) sender;
             if (label.equalsIgnoreCase("cama")) {
-                try {
-                    String mensaje = p.getBedSpawnLocation() != null ? String.format("Tu cama está en X: %d Y: %d Z: %d.", p.getBedSpawnLocation().getBlockX(), p.getBedSpawnLocation().getBlockY(), p.getBedSpawnLocation().getBlockZ())
-                            : "No tienes cama.";
+                Player p = (Player) sender;
+                if (p.getBedSpawnLocation() != null) {
+                    String mensaje = (p.getBedSpawnLocation().getWorld().getEnvironment().equals(World.Environment.NORMAL))
+                            ? "Tu cama está en X: " + p.getBedSpawnLocation().getBlockX() + " Y: " + p.getBedSpawnLocation().getBlockY() + " Z: " + p.getBedSpawnLocation().getBlockZ()
+                            : "Tu nexo de reaparición está en X: " + p.getBedSpawnLocation().getBlockX() + " Y: " + p.getBedSpawnLocation().getBlockY() + " Z: " + p.getBedSpawnLocation().getBlockZ();
                     p.sendMessage(ChatColor.DARK_GREEN + mensaje);
-                } catch (IllegalArgumentException e) {
-                    return false;
+                } else {
+                    p.sendMessage(ChatColor.RED + "No tienes cama o nexo de reaparición.");
+                }
+            }
+            else if (label.equalsIgnoreCase("playtime")) {
+                if (args.length < 2) {
+                    Player p = (Player) sender;
+                    if (args.length == 1) {
+                        p = Bukkit.getPlayer(args[0]);
+                    }
+                    if (p != null) {
+                        double horas = (double) p.getStatistic(Statistic.PLAY_ONE_MINUTE) / 72000;
+                        sender.sendMessage(ChatColor.DARK_GREEN + p.getDisplayName() + " ha jugado " + Math.round(horas * 100.0) / 100.0 + " horas"); // redondeamos las horas a dos decimales
+                    } else {
+                        sender.sendMessage(ChatColor.RED + "Ese jugador no esta online!");
+                    }
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Has escrito mal el comando.");
                 }
             }
         }
@@ -314,7 +331,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             }
 
         } catch (Exception e){
-
+            
         }
 
         if(item != null){

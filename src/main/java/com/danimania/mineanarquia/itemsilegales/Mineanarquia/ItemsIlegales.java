@@ -8,10 +8,14 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.reflect.StructureModifier;
+import com.google.common.collect.Multimap;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -27,6 +31,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -59,8 +64,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         materialesIlegales.add(Material.LEGACY_MONSTER_EGGS);
         materialesIlegales.add(Material.END_PORTAL_FRAME);
         materialesIlegales.add(Material.END_PORTAL);
-        materialesIlegales.add(Material.FIRE_CHARGE);
-
         // vamos a quitar los spawner egg no?
 
         List<Material> materials = Arrays.asList(Material.values());
@@ -256,10 +259,42 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     }
 
+    @EventHandler
+    public void alCargarChunk(ChunkLoadEvent e){
+        if(!e.isNewChunk()){
+            for(Entity ent: e.getChunk().getEntities()) {
+                verificarEntidadIlegal(ent);
+            }
+        }
+    }
+
+    public void verificarEntidadIlegal(Entity e ) {
+        if(e.isInvulnerable()) {
+            Bukkit.getServer().getLogger().warning("Posible entidad ilegal: "+ ". X"+e.getLocation().getX()+", Y"+e.getLocation().getY()+", Z"+e.getLocation().getZ());
+            //e.teleport(new Location(e.getLocation().getWorld(), 0, -20 , 0));
+            //e.remove();
+
+        }
+
+    }
+
     public boolean verificarIlegal(ItemStack item){
         // nombre ilegal ilegal!
         try {
             if(item.getItemMeta().hasDisplayName()){
+                Multimap<Attribute, AttributeModifier> modificadores = item.getItemMeta().getAttributeModifiers();
+                try {
+                    for ( Attribute attr: modificadores.asMap().keySet()) {
+                        for( AttributeModifier mod : modificadores.get(attr) ){
+                            if(mod.getAmount() > 50.0) {
+                                return true;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+
+                }
+
                 String nombre = item.getItemMeta().getDisplayName().toLowerCase();
                 if(nombre.contains("ilegal")
                         || nombre.contains("danimania")

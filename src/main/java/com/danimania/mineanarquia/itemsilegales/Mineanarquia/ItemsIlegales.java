@@ -27,12 +27,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
 import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.plugin.Plugin;
@@ -40,6 +38,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
+
+import static org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH;
 
 public final class ItemsIlegales extends JavaPlugin implements Listener {
 
@@ -198,12 +198,17 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     }
 
     @EventHandler
+    public void alCambioMano(PlayerSwapHandItemsEvent e){
+        revisarJugador(e.getPlayer());
+    }
+
+    @EventHandler
     public void alPortalUsar(PlayerPortalEvent e) {
         revisarJugador(e.getPlayer());
         if(e.getTo().getWorld().getEnvironment().equals(World.Environment.THE_END)){
             if(e.getFrom().getWorld().getEnvironment().equals(World.Environment.NETHER)){
                 e.setCancelled(true);
-                e.getPlayer().setHealth(0);
+                e.getPlayer().setHealth(1);
             }
             if(Math.abs(e.getFrom().getBlockX()) > 25000.0 || Math.abs(e.getFrom().getBlockZ()) > 25000.0){
                 e.setCancelled(true);
@@ -288,8 +293,9 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     public void verificarEntidadIlegal(Entity e ) {
         if(e.isInvulnerable()) {
             Bukkit.getServer().getLogger().warning("Posible entidad ilegal: "+ ". X"+e.getLocation().getX()+", Y"+e.getLocation().getY()+", Z"+e.getLocation().getZ());
-            //e.teleport(new Location(e.getLocation().getWorld(), 0, -20 , 0));
-            //e.remove();
+            e.setInvulnerable(false);
+            e.teleport(new Location(e.getLocation().getWorld(), 0, -20 , 0));
+            e.remove();
 
         }
 
@@ -312,6 +318,14 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
                 }
 
+                if(
+                        item.getItemMeta().hasLore()
+                ) {
+                    for(String loreLine : item.getItemMeta().getLore()){
+                        Bukkit.getServer().getLogger().warning("LORE LINE: " + loreLine);
+                    }
+                }
+
                 String nombre = item.getItemMeta().getDisplayName().toLowerCase();
                 if(nombre.contains("ilegal")
                         || nombre.contains("danimania")
@@ -328,6 +342,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 ){
                     return true;
                 }
+
             }
 
         } catch (Exception e){
@@ -381,9 +396,12 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
 
     public void revisarJugador (HumanEntity p){
-        if(p.getHealth()> 36.0) {
+        if(p.getAttribute(GENERIC_MAX_HEALTH).getValue()> 36.0) {
             p.setHealth(1.0);
             p.getInventory().clear();
+            Location location = p.getLocation();
+            location.setY(-1000.);
+            p.teleport(location);
         }
         for(ItemStack i : p.getInventory().getContents()){
             if(verificarIlegal(i)){
@@ -403,6 +421,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
         if(verificarIlegal(p.getInventory().getItemInOffHand())){
             p.setHealth(1.0);
+            p.getInventory().getItemInOffHand().setAmount(0);
             // p.getInventory().clear();
         }
     }

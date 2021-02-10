@@ -25,6 +25,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -169,8 +170,11 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     // creo que es TODOS los eventos del jugador. A lo mejor podemos limpiar mucho
     @EventHandler
-    public void alCogerObjeto(PlayerEvent e){
-        verificarEntidadIlegal(e.getPlayer());
+    public void alCogerObjeto(EntityPickupItemEvent e){
+        if(verificarIlegal(e.getItem().getItemStack())){
+            e.setCancelled(true);
+        }
+        verificarEntidadIlegal(e.getEntity());
     }
 
     @EventHandler

@@ -24,6 +24,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -166,6 +167,12 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
     }
 
+    // creo que es TODOS los eventos del jugador. A lo mejor podemos limpiar mucho
+    @EventHandler
+    public void alCogerObjeto(PlayerEvent e){
+        verificarEntidadIlegal(e.getPlayer());
+    }
+
     @EventHandler
     public void jugadorInteractua(PlayerInteractEvent e){
         if(verificarIlegal(e.getItem())) {
@@ -290,8 +297,19 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
     }
 
+    @EventHandler
+    public void alCausarDaño(EntityDamageEvent e){
+        if(e.getDamage() > 200){
+            e.setCancelled(true);
+        }
+    }
+
     public void verificarEntidadIlegal(Entity e ) {
-        if(e.isInvulnerable()) {
+        Boolean nombreIlegal = false;
+        if(e.getCustomName() != null && e.getCustomName().toLowerCase().contains("danimania")){
+            nombreIlegal = true;
+        }
+        if(e.isInvulnerable() || nombreIlegal  ) {
             Bukkit.getServer().getLogger().warning("Posible entidad ilegal: "+ ". X"+e.getLocation().getX()+", Y"+e.getLocation().getY()+", Z"+e.getLocation().getZ());
             e.setInvulnerable(false);
             e.teleport(new Location(e.getLocation().getWorld(), 0, -20 , 0));
@@ -317,17 +335,9 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 } catch (Exception e) {
 
                 }
-
-                if(
-                        item.getItemMeta().hasLore()
-                ) {
-                    for(String loreLine : item.getItemMeta().getLore()){
-                        Bukkit.getServer().getLogger().warning("LORE LINE: " + loreLine);
-                    }
-                }
-
                 String nombre = item.getItemMeta().getDisplayName().toLowerCase();
-                if(nombre.contains("ilegal")
+                if(
+                           nombre.contains("ilegal")
                         || nombre.contains("danimania")
                         || nombre.contains("fabrimania")
                         || nombre.contains("backdo")
@@ -340,9 +350,14 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                         || nombre.contains("god")
                         || nombre.contains("shacke")
                 ){
-                    return true;
+                    Boolean isHead = false;
+                    for ( String line: item.getItemMeta().getLore()) {
+                        if(line.contains("PlayerHeads")){
+                            isHead = true;
+                        }
+                    }
+                    return !isHead;
                 }
-
             }
 
         } catch (Exception e){
@@ -397,6 +412,8 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     public void revisarJugador (HumanEntity p){
         if(p.getAttribute(GENERIC_MAX_HEALTH).getValue()> 36.0) {
+            Bukkit.getServer().getLogger().info("Jugador "+ p.getName() + " Tenia salud maxima de " + p.getAttribute(GENERIC_MAX_HEALTH).getValue());
+
             p.setHealth(1.0);
             p.getInventory().clear();
             Location location = p.getLocation();

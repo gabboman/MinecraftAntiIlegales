@@ -10,4 +10,4 @@ commands:
   playtime:
     description: Checkea tu tiempo de juego.
   killstats:
-    description: Checkea tu tiempo de juego.
+    description: Checkea cuanta gente has matado.

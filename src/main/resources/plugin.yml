@@ -9,3 +9,5 @@ commands:
     description: Checkea tu punto de respawn.
   playtime:
     description: Checkea tu tiempo de juego.
+  killstats:
+    description: Checkea tu tiempo de juego.

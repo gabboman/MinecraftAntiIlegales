@@ -138,15 +138,19 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                     p.sendMessage(ChatColor.RED + "No tienes cama o nexo de reaparición.");
                 }
             }
-            else if (label.equalsIgnoreCase("playtime")) {
+            else if (label.equalsIgnoreCase("playtime") || label.equalsIgnoreCase("killstats")) {
                 if (args.length < 2) {
                     Player p = (Player) sender;
                     if (args.length == 1) {
                         p = Bukkit.getPlayer(args[0]);
                     }
                     if (p != null) {
-                        double horas = (double) p.getStatistic(Statistic.PLAY_ONE_MINUTE) / 72000;
-                        sender.sendMessage(ChatColor.DARK_GREEN + p.getDisplayName() + " ha jugado " + Math.round(horas * 100.0) / 100.0 + " horas"); // redondeamos las horas a dos decimales
+                        if (label.equalsIgnoreCase("playtime")) {
+                            double horas = (double) p.getStatistic(Statistic.PLAY_ONE_MINUTE) / 72000;
+                            sender.sendMessage(ChatColor.DARK_GREEN + (p.getDisplayName() + " ha jugado " + Math.round(horas * 100.0) / 100.0 + " horas")); // redondeamos las horas a dos decimales
+                        } else {
+                            sender.sendMessage(ChatColor.DARK_GREEN + (p.getDisplayName() + " ha matado " + p.getStatistic(Statistic.PLAYER_KILLS) + " jugadores"));
+                        }
                     } else {
                         sender.sendMessage(ChatColor.RED + "Ese jugador no esta online!");
                     }

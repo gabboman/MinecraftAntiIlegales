@@ -15,10 +15,7 @@ import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -313,7 +310,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         if(e.getCustomName() != null && e.getCustomName().toLowerCase().contains("danimania")){
             nombreIlegal = true;
         }
-        if(e.isInvulnerable() || nombreIlegal  ) {
+        if((e.isInvulnerable() || nombreIlegal ) && e.getType() != EntityType.PLAYER  ) {
             Bukkit.getServer().getLogger().warning("Posible entidad ilegal: "+ ". X"+e.getLocation().getX()+", Y"+e.getLocation().getY()+", Z"+e.getLocation().getZ());
             e.setInvulnerable(false);
             e.teleport(new Location(e.getLocation().getWorld(), 0, -20 , 0));
@@ -338,29 +335,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                     }
                 } catch (Exception e) {
 
-                }
-                String nombre = item.getItemMeta().getDisplayName().toLowerCase();
-                if(
-                           nombre.contains("ilegal")
-                        || nombre.contains("danimania")
-                        || nombre.contains("fabrimania")
-                        || nombre.contains("backdo")
-                        || nombre.contains("32k")
-                        || nombre.contains("unnamed")
-                        || nombre.contains("wither")
-                        || nombre.contains("stach")
-                        || nombre.contains("z4st")
-                        || nombre.contains("boom y")
-                        || nombre.contains("god")
-                        || nombre.contains("shacke")
-                ){
-                    Boolean isHead = false;
-                    for ( String line: item.getItemMeta().getLore()) {
-                        if(line.contains("PlayerHeads")){
-                            isHead = true;
-                        }
-                    }
-                    return !isHead;
                 }
             }
 
@@ -402,17 +376,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
         return false;
     }
-
-    public Boolean ilegalStack(ItemStack item){
-        Boolean res = false;
-
-        return res;
-    }
-
-    public void checkPlayerSpeed( Player p) {
-
-    }
-
 
     public void revisarJugador (HumanEntity p){
         if(p.getAttribute(GENERIC_MAX_HEALTH).getValue()> 36.0) {

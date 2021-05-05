@@ -174,6 +174,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     public void alCogerObjeto(EntityPickupItemEvent e){
         if(verificarIlegal(e.getItem().getItemStack())){
             e.setCancelled(true);
+            e.getItem().getItemStack().setAmount(0);
         }
         verificarEntidadIlegal(e.getEntity());
     }
@@ -185,22 +186,6 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
         revisarJugador(e.getPlayer());
     }
-
-    @EventHandler
-    public void moveObjectFromInventory (InventoryMoveItemEvent e) {
-        if(verificarIlegal(e.getItem())) {
-            e.getItem().setAmount(0);
-        } else {
-            if (
-                    e.getSource().getType() == InventoryType.SHULKER_BOX && e.getDestination().getType() == InventoryType.HOPPER
-            ) {
-                e.setCancelled(true);
-            }
-        }
-
-
-    }
-
 
     @EventHandler
     public void alEntrar(PlayerJoinEvent e){

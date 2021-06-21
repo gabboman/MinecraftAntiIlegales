@@ -1,4 +1,4 @@
-package com.danimania.mineanarquia.itemsilegales.Mineanarquia;
+package com.gabboman.mineanarquia.itemsilegales.Mineanarquia;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;

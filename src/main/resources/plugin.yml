@@ -1,8 +1,8 @@
 name: MineAnarquiaAntiIlegales
 version: ${project.version}
-main: com.danimania.mineanarquia.itemsilegales.Mineanarquia.ItemsIlegales
-api-version: 1.16
-authors: [danimania, gabboman, nekiak]
+main: com.gabboman.mineanarquia.itemsilegales.Mineanarquia.ItemsIlegales
+api-version: 1.17
+authors: [gabboman, nekiak]
 depend: [ProtocolLib]
 commands:
   cama:

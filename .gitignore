@@ -1,3 +1,5 @@
 # Default ignored files
 /out/*
 target/*
+.idea/*
+.DS_Store

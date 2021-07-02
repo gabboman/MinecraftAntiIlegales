@@ -23,6 +23,7 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityPickupItemEvent;
+import org.bukkit.event.entity.EntityToggleGlideEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -227,10 +228,8 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
     
     
     @EventHandler
-    public void alMoverse(PlayerMoveEvent e) {
-        final Player p = e.getPlayer();
-        revisarPosicionJugador(p);
-
+    public void alVolar(EntityToggleGlideEvent e) {
+        revisarPosicionJugador((Player) e.getEntity());
     }
 
 

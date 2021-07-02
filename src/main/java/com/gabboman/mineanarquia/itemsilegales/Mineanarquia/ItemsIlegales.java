@@ -410,9 +410,10 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                 p.sendMessage("Advertencia: Sal del techo (o del vacío) antes de llegar a 1 millon.\n(O MORIRÁS!!!)");
             }
             if (x > 1000000 || z > 1000000) {
-                // voy a simplemente molestar al usuario mandandole mensajes
+                ItemStack[] inv = p.getInventory().getContents();
                 p.getInventory().clear();
                 p.setHealth(0.0);
+                p.getInventory().setContents(inv);
             }
 
         }

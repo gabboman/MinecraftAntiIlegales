@@ -57,8 +57,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         materialesIlegales.add(Material.SPAWNER);
         materialesIlegales.add(Material.LEGACY_MONSTER_EGG);
         materialesIlegales.add(Material.LEGACY_MONSTER_EGGS);
-        materialesIlegales.add(Material.END_PORTAL_FRAME);
-        materialesIlegales.add(Material.END_PORTAL);
+
         // vamos a quitar los spawner egg no?
 
         List<Material> materials = Arrays.asList(Material.values());
@@ -66,6 +65,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             // bloques ilegales. su existencia debe ser destruida
             if (m.name().contains("SPAWN_EGG")
                     || m.name().contains("COMMAND")
+                    || m.name().contains("JIGSAW")
                     || m.name().contains("STRUCTURE")) {
                 materialesIlegales.add(m);
             }

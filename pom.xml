@@ -6,7 +6,7 @@
 
     <groupId>com.gabboman</groupId>
     <artifactId>mineanarquia.itemsilegales</artifactId>
-    <version>1.7.1</version>
+    <version>1.8.0</version>
     <packaging>jar</packaging>
 
     <name>MineanarquiaIAntiIlegales</name>
@@ -69,12 +69,13 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.17-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.comphenix.protocol</groupId>
             <artifactId>ProtocolLib</artifactId>
             <version>4.7.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

@@ -208,6 +208,12 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
             e.setCancelled(true);
             e.getPlayer().setHealth(1);
         }
+        if(items.getType() == Material.END_PORTAL_FRAME) {
+            //do not put those blocks unless youre further than 25k
+            if (e.getPlayer().getLocation().getBlockX() < 25000 && e.getPlayer().getLocation().getBlockZ() < 25000 ){
+                e.setCancelled(true);
+            }
+        }
         revisarJugador(e.getPlayer());
     }
 

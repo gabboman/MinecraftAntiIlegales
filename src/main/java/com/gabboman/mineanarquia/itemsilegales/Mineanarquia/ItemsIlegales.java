@@ -34,6 +34,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
 
+import static java.lang.Math.abs;
 import static org.bukkit.attribute.Attribute.GENERIC_MAX_HEALTH;
 
 public final class ItemsIlegales extends JavaPlugin implements Listener {
@@ -97,8 +98,8 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
                     double xPlayer = player.getLocation().getBlockX();
                     double zPlayer = player.getLocation().getBlockZ();
 
-                    double xDif = Math.abs(xPlayer - xPacket);
-                    double yDif = Math.abs(zPlayer - zPacket);
+                    double xDif = abs(xPlayer - xPacket);
+                    double yDif = abs(zPlayer - zPacket);
                     if (xDif > 250 | yDif > 250) {
                         event.setCancelled(true);
                     }
@@ -210,7 +211,7 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
         }
         if(items.getType() == Material.END_PORTAL_FRAME) {
             //do not put those blocks unless youre further than 25k
-            if (e.getPlayer().getLocation().getBlockX() < 25000 && e.getPlayer().getLocation().getBlockZ() < 25000 ){
+            if (abs(e.getPlayer().getLocation().getBlockX()) < 25000 && abs(e.getPlayer().getLocation().getBlockZ()) < 25000 ){
                 e.setCancelled(true);
             }
         }
@@ -359,9 +360,9 @@ public final class ItemsIlegales extends JavaPlugin implements Listener {
 
     public void revisarPosicionJugador(Player p) {
         Location localizacion = p.getEyeLocation();
-        int x = Math.abs(localizacion.getBlockX());
+        int x = abs(localizacion.getBlockX());
         int y = localizacion.getBlockY();
-        int z = Math.abs(localizacion.getBlockZ());
+        int z = abs(localizacion.getBlockZ());
         if (localizacion.getWorld().getName().toLowerCase().contains("nether") && (y < 0 || y > 128)) {
             if (x > 990000 || z > 990000) {
                 // voy a simplemente molestar al usuario mandandole mensajes
